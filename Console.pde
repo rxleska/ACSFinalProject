@@ -1,28 +1,58 @@
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-class Console {
+class Console implements Comparable{
     //Class Variables
     private String name;
     private TreeSet<Game> games;
+    public int year;
+    public boolean handHeld;
     
     //Constuctors
     public Console(){
         name = "";
         games = new TreeSet<Game>();
+        year = 0;
+        handHeld = false;
     }
     public Console(String n){
         this();
         setName(n);
     }
-
-    //Getters and Setters
+    public Console(String n, String y){
+        this();
+        setName(n);
+        setYear(y);
+    }
+    public Console(String n, int y){
+        this();
+        setName(n);
+        setYear(y);
+    }
+    public Console(String n, String y, boolean h){this(n,y); setHHStatus(h);}
+    public Console(String n, int y, boolean h){this(n,y); setHHStatus(h);}
+    public Console(String n, String y, String h){this(n,y); setHHStatus(h);}
+    public Console(String n, int y, String h){this(n,y); setHHStatus(h);}
+    
+    //#############################
+    //#### Getters and Setters ####
+    //#############################
     public void setName(String n){name = n;}
     public String getName(){return name;}
+    //Tree of Games
     public void addGame(Game g){games.add(g);}
     public void addGame(Set<Game> g){games.addAll(g);}
     public TreeSet getTree(){return games;}
     public int numGames(){return games.size();}
+    //Release Year 
+    public void setYear(int y){year = y;}
+    public void setYear(String y){year = parseInt(y);}
+    public int getYear(){return year;}
+    public String getTitle(){return getName() + ":" + getYear();}
+    //Handheld vs full Console status
+    public void setHHStatus(boolean h){handHeld = h;}
+    public void setHHStatus(String s){handHeld = s.toUpperCase().equals("H");}
+    public boolean isHandHeld(){return handHeld;}
 
     //randomly gets game from Set games
     public Game getRandomGame(){
@@ -108,5 +138,80 @@ class Console {
             return matcher.group();
         }
         return "";
+    }
+
+
+    //Returns the smallest or largest game by file size and then by name
+    public Game getSmallest(){return games.first();}
+    public Game getLargest() {return games.last(); }
+    //Returns Median by finding the middle item in the set
+    public Game getMedian(){
+        if(games.isEmpty())
+            return null;
+         Iterator iter = games.iterator();
+         for(int mid = games.size()/2;mid > 0; mid--){
+             iter.next();
+         }
+         return (Game) iter.next();
+    }
+    
+    //Gets the average size of file by getting total then dividing
+    public double getAverageSize(){
+        double tot = 0.0;
+        Iterator iter = games.iterator();
+        while(iter.hasNext()){
+            tot += ((Game)iter.next()).getSize();
+        }
+        return tot / games.size();
+    }
+    public String getAverageReadable(){
+        return doubleToReadableSize(getAverageSize());
+    }
+
+    //Converts kb file sizes to readable values
+    public String doubleToReadableSize(double totalSize){
+        String swSize = ((int)Math.floor(totalSize)) + "";
+        switch(
+            //case to integer for switch, Math ceiling to round up no matter what
+            (int) Math.ceil(
+                // length of KB value converted to double then divided by 3 to get the magnitude
+                (swSize.length() * 1.0)/3
+            ) -1 // subtract one to match the switch below
+        ){
+            case 5:
+            return Math.ceil((totalSize/(Math.pow(10,9)))*1000)/1000 + " EB";
+            case 4:
+            return Math.ceil((totalSize/(Math.pow(10,9)))*1000)/1000 + " PB";
+            case 3:
+            return Math.ceil((totalSize/(Math.pow(10,9)))*1000)/1000 + " TB";
+            case 2:
+            return Math.ceil((totalSize/(Math.pow(10,6)))*1000)/1000 + " GB";
+            case 1:
+            return Math.ceil((totalSize/(Math.pow(10,3)))*1000)/1000 + " MB";
+            case 0:
+            return Math.ceil((totalSize*1000))/1000 + " KB";
+        }
+        return "unknown size";
+    }
+
+    //gets total file sizes of all games
+    public double getTotalSize(){
+        double tot = 0.0;
+        Iterator iter = games.iterator();
+        while(iter.hasNext()){
+            tot += ((Game)iter.next()).getSize();
+        }
+        return tot;
+    }
+    public String getTotalReadable(){
+        return doubleToReadableSize(getTotalSize());
+    }
+
+
+    public int compareTo(Object o){
+        return this.getYear() - ((Console) o).getYear();
+    }
+    public String toString(){
+        return getName() + ":" + getYear() + " -+- " +  numGames(); 
     }
 }

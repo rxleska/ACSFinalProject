@@ -29,3 +29,6 @@ File Exntesions for Games
     .7z
     .nsp
     .wbfs
+
+Colors 
+    
