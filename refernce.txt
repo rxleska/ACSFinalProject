@@ -1,0 +1,31 @@
+Regex needed
+    s.replaceAll(regex,"");
+    Remove all in Paraenthesis
+        \\([^)]*\\)
+    Remove all in curlys 
+        \\\{[^}]*\\}
+    Remove all in corrner brackets
+        \\<[^>]*\\>
+    Remove all in brackets
+        \\[.*?\\]
+    All above for java
+         \\([^)]*\\)|\\{[^}]*\\}|\\[.*?\\]|\\<[^>]*\\>
+    
+    comma in between 2 double quotes
+        (\"\\w*),(\\w*\")
+
+    Four digit non year
+        ([03456789]\d\d\d)
+    not four digit nums
+        \d{5,26}|\b\d{1,3}\b
+    Two above together
+        ([03456789]\d\d\d)|\d{5,26}|\b\d{1,3}\b
+
+
+File Exntesions for Games
+    .rar
+    .iso
+    .zip
+    .7z
+    .nsp
+    .wbfs
