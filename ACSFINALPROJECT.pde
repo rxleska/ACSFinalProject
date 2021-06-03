@@ -1,10 +1,11 @@
 import java.util.*;
 ArrayList<Console> consoles;
-boolean atHome = false;
+boolean atHome = true;
 String filePath;
 int sceneSequencer;
 final int graphBound = 50;
 final color[] colors = {#e6194b, #3cb44b, #ffe119, #4363d8, #f58231, #911eb4, #46f0f0, #f032e6, #bcf60c, #fabebe, #008080, #e6beff, #9a6324, #fffac8, #800000, #aaffc3, #808000, #ffd8b1, #000075, #808080, #ffffff};
+InteractiveGraph ig;
 void settings(){
     size(1400,800);
 }
@@ -18,6 +19,7 @@ void setup(){
     noStroke();
     sceneSequencer = 0;
     Collections.sort(consoles);
+    ig = new InteractiveGraph("year","average");
 }
 void draw(){
     background(0);
@@ -26,18 +28,12 @@ void draw(){
             displayValues();
         break;
         case 1:
-            displayGraph();
+            ig.drawGraph();
         break;
         case 2:
-            pieChartAverage();
-        break;
-        case 3:
             pieChartTotals();
         break;
-        case 4:
-            readableTest();
-        break;
-        case 5:
+        case 3:
             sceneSequencer = 0;
         break;
     }
@@ -74,12 +70,6 @@ void readFiles(){
     }
 }
 
-void checkWork(){
-    for(Console c: consoles){
-        System.out.println(c.getName() + "  :  " + c.numGames() + "\n" + c.getRandomGame());
-    }
-}
-
 void displayValues(){
     int i = 0; 
     fill(144,238,144);
@@ -98,108 +88,6 @@ void displayValues(){
         i++;
     }
 }
-
-
-//Creates a Graph of the Average Game size by year of the consoles
-void displayGraph(){
-    //Create Graph Outline
-    stroke(255,0,0);
-    strokeWeight(5);
-    line(graphBound,graphBound,graphBound,height-graphBound);
-    line(graphBound,height-graphBound, width-graphBound,height-graphBound);
-    
-    //Places dots
-    push();
-        //changes to drawing from the origin of the graph
-        translate(graphBound, height-graphBound);
-        //defines area of graph
-        float xGraphable = width - (graphBound*2);
-        float yGraphable = height - (graphBound*2);
-        
-        //defines the x axis scale and starting point
-        float startYear = consoles.get(0).getYear() * 1.0f;
-        float xLedg = consoles.get(consoles.size()-1).getYear() - startYear;
-        
-        //defines the max y value
-        float yMax = 11.0f * 1000000; //11 GB in KB
-
-        //Plots dots for each console
-        for(Console c: consoles){
-        
-            //creates x position relaitive to the x axis definition
-            float xPos = (((c.getYear() - startYear)*1.0f) / xLedg);
-            xPos = (xPos * xGraphable);
-
-            //creates y position relative to the y max value
-            float yPos =  (((float) c.getAverageSize()) / yMax);
-            yPos = -1.0f * (yPos * yGraphable);
-            
-            //makes dot pink if console is hand held
-            noStroke();
-            if(c.isHandHeld())
-                fill(255,0,255);
-            else
-                fill(255);
-
-            //draws dot
-            circle(xPos, yPos, 20);
-        }
-    pop();
-}
-
-//
-void displayGraph(String xa, String ya){
-    //Create Graph Outline
-    stroke(255,0,0);
-    strokeWeight(5);
-    line(graphBound,graphBound,graphBound,height-graphBound);
-    line(graphBound,height-graphBound, width-graphBound,height-graphBound);
-    
-    //Places dots
-    push();
-        //changes to drawing from the origin of the graph
-        translate(graphBound, height-graphBound);
-        //defines area of graph
-        float xGraphable = width - (graphBound*2);
-        float yGraphable = height - (graphBound*2);
-        
-        //defines the x axis scale and starting point
-        float startX = getMin(xa) * 1.0f;
-        float xLedg = getMax(xa) - getMin(xa);
-        
-        //defines the max y value
-        float yMax = getMax(ya); //11 GB in KB
-
-        //Plots dots for each console
-        for(Console c: consoles){
-        
-            //creates x position relaitive to the x axis definition
-            float xPos = (((c.getData(xa) - startX)*1.0f) / xLedg);
-            xPos = (xPos * xGraphable);
-
-
-//########################################################################################
-//##############################################################################################################
-//########################################################################################
-//##############################################################################################################
-
-            //creates y position relative to the y max value
-            float yPos =  (((float) c.getAverageSize()) / yMax);
-            yPos = -1.0f * (yPos * yGraphable);
-            
-            //makes dot pink if console is hand held
-            noStroke();
-            if(c.isHandHeld())
-                fill(255,0,255);
-            else
-                fill(255);
-
-            //draws dot
-            circle(xPos, yPos, 20);
-        }
-    pop();
-}
-
 
 //Creates a pie chart comparing sizes of game libraries for each console
 void pieChartTotals(){
@@ -275,16 +163,6 @@ void pieChartAverage(){
     pop();
 }
 
-void readableTest(){
-    
-    String[] testable = {"year","smallest","largest","average","median","total","date","small","large","ave","mid","tot"};
-    textSize(28 * (((testable.length*(1.0))/16)));
-    for(int i = testable.length-1; i>=0; i--){
-        Console temp = consoles.get(i%consoles.size());
-        text(testable[i] + " : " + getMax(testable[i]) + ":" + getMin(testable[i]),40, (height/(testable.length+1))*(i+1));
-    }
-}
-
 void dbug(){
     System.out.println("HEREHEREHEREHEREHEREHEREHEREHEREHERE");
 }
@@ -293,20 +171,44 @@ public color diffColor(int x){
     return colors[x%colors.length];
 }
 
-public double getMax(String s){
-    double max = 0.0;
-    for(Console c: consoles){
-        if(c.getData(s) > max)
-            max = c.getData(s);
+//Mouse Click interactions
+void mousePressed(){
+    if(sceneSequencer == 1){
+        //Checks for Selection in X editor
+        if(ig.getXEdit()){
+            if(mouseY > height- ig.getBound() && mouseX > width- (ig.getBound()*4)){
+                ig.editXOff();
+            }
+            else{
+                for(int end = ig.getOptsLength()-1; end >=0; end--){
+                    if(mouseY > ig.getBound() +40 + (90*end)){
+                        ig.setX(end);
+                        break;
+                    }
+                }  
+            }
+        }
+        //Checks of Selection in Y Editor
+        else if(ig.getYEdit()){
+            if(mouseY > height- ig.getBound() && mouseX > width- (ig.getBound()*4)){
+                ig.editYOff();
+            }
+            else{
+                for(int end = ig.getOptsLength()-1; end >=0; end--){
+                    if(mouseY > ig.getBound() +40 + (90*end)){
+                        ig.setY(end);
+                        break;
+                    }
+                }
+            }
+        }
+        //Checks for clicking x or y axis in interactive graph
+        else if(mouseX < ig.getBound() && mouseY > ig.getBound() && mouseY < height-ig.getBound())
+            ig.editYOn();
+        else if(mouseY > height - ig.getBound() && mouseX > ig.getBound() && mouseX < width-ig.getBound())
+            ig.editXOn();
+        else{
+            //dont
+        }
     }
-    return max;
-}
-
-public double getMin(String s){
-    double min = Double.MAX_VALUE;
-    for(Console c: consoles){
-        if(c.getData(s) < min)
-            min = c.getData(s);
-    }
-    return min;
 }
