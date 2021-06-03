@@ -33,7 +33,7 @@ class Console implements Comparable{
     public Console(String n, int y, boolean h){this(n,y); setHHStatus(h);}
     public Console(String n, String y, String h){this(n,y); setHHStatus(h);}
     public Console(String n, int y, String h){this(n,y); setHHStatus(h);}
-    
+
     //#############################
     //#### Getters and Setters ####
     //#############################
@@ -53,6 +53,67 @@ class Console implements Comparable{
     public void setHHStatus(boolean h){handHeld = h;}
     public void setHHStatus(String s){handHeld = s.toUpperCase().equals("H");}
     public boolean isHandHeld(){return handHeld;}
+    //Dynamic Getter and Setter
+    public double getData(String s){
+        switch(s.toLowerCase()){
+            case "year":
+                return (double) getYear();
+            case "smallest":
+                return getSmallest().getSize();
+            case "largest":
+                return getLargest().getSize();
+            case "average":
+                return getAverageSize();
+            case "median":
+                return getMedian().getSize();
+            case "total":
+                return getTotalSize();
+            case "date":
+                return (double) getYear();
+            case "small":
+                return getSmallest().getSize();
+            case "large":
+                return getLargest().getSize();
+            case "ave":
+                return getAverageSize();
+            case "mid":
+                return getMedian().getSize();
+            case "tot":
+                return getTotalSize();
+        }
+        return 0.0;
+    }
+
+    public String getDataReadable(String s){
+        switch(s.toLowerCase()){
+            case "year":
+                return getYear() + "";
+            case "smallest":
+                return getSmallest().getSizeStr();
+            case "largest":
+                return getLargest().getSizeStr();
+            case "average":
+                return getAverageReadable();
+            case "median":
+                return getMedian().getSizeStr();
+            case "total":
+                return getTotalReadable();
+            case "date":
+                return getYear() + "";
+            case "small":
+                return getSmallest().getSizeStr();
+            case "large":
+                return getLargest().getSizeStr();
+            case "ave":
+                return getAverageReadable();
+            case "mid":
+                return getMedian().getSizeStr();
+            case "tot":
+                return getTotalReadable();
+        }
+        return "unrecognised value";
+    }
+
 
     //randomly gets game from Set games
     public Game getRandomGame(){
