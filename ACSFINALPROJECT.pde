@@ -1,11 +1,12 @@
 import java.util.*;
 ArrayList<Console> consoles;
-boolean atHome = true;
+boolean atHome = false;
 String filePath;
 int sceneSequencer;
 final int graphBound = 50;
 final color[] colors = {#e6194b, #3cb44b, #ffe119, #4363d8, #f58231, #911eb4, #46f0f0, #f032e6, #bcf60c, #fabebe, #008080, #e6beff, #9a6324, #fffac8, #800000, #aaffc3, #808000, #ffd8b1, #000075, #808080, #ffffff};
 InteractiveGraph ig;
+InteractivePieChart ipc;
 void settings(){
     size(1400,800);
 }
@@ -20,6 +21,7 @@ void setup(){
     sceneSequencer = 0;
     Collections.sort(consoles);
     ig = new InteractiveGraph("year","average");
+    ipc = new InteractivePieChart();
 }
 void draw(){
     background(0);
@@ -31,7 +33,8 @@ void draw(){
             ig.drawGraph();
         break;
         case 2:
-            pieChartTotals();
+            ipc.drawChart();
+            // pieChartTotals();
         break;
         case 3:
             sceneSequencer = 0;
@@ -211,4 +214,22 @@ void mousePressed(){
             //dont
         }
     }
+    else if(sceneSequencer == 2){
+        if(ipc.getEdit()){
+            if(mouseY > height- ipc.getBound() && mouseX > width- (ipc.getBound()*4)){
+                ipc.editOff();
+            }
+            else{
+                for(int end = ipc.getOptsLength()-1; end >=0; end--){
+                    if(mouseY > ipc.getBound() +40 + (90*end)){
+                        ipc.setValue(end);
+                        break;
+                    }
+                }  
+            }
+        }
+        else if(mouseX < ig.getBound() && mouseY > ig.getBound() && mouseY < height-ig.getBound())
+            ipc.editOn();
+    }
+
 }
