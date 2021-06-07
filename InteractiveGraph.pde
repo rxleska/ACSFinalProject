@@ -42,8 +42,6 @@ class InteractiveGraph{
         else{
             graphIt();
         }
-        
-
     }
     public void editYOn(){editY = true;}
     public void editXOn(){editX = true;}

@@ -1,11 +1,12 @@
 import java.util.*;
 ArrayList<Console> consoles;
-boolean atHome = false;
+boolean atHome = true;
 String filePath;
 int sceneSequencer;
 final int graphBound = 50;
 final color[] colors = {#e6194b, #3cb44b, #ffe119, #4363d8, #f58231, #911eb4, #46f0f0, #f032e6, #bcf60c, #fabebe, #008080, #e6beff, #9a6324, #fffac8, #800000, #aaffc3, #808000, #ffd8b1, #000075, #808080, #ffffff};
-InteractiveGraph ig;
+InteractiveLineGraph ig;
+// InteractiveLineGraph ilg;
 InteractivePieChart ipc;
 void settings(){
     size(1400,800);
@@ -20,7 +21,8 @@ void setup(){
     noStroke();
     sceneSequencer = 0;
     Collections.sort(consoles);
-    ig = new InteractiveGraph("year","average");
+    ig = new InteractiveLineGraph("year","average");
+    // ilg = new InteractiveLineGraph("year","average");
     ipc = new InteractivePieChart();
 }
 void draw(){
