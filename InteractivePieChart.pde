@@ -76,6 +76,7 @@ class InteractivePieChart {
         push();
         translate(width/2, height/2);
         int count = 0;
+        boolean far = false;
         for(Console c: consoles){
             //finds percentage then finds number of lines to draw and draws them
             float percent = (float) ((c.getData(comparedValue))/total);
@@ -85,7 +86,15 @@ class InteractivePieChart {
                 stroke(color(diffColor(count))); //colors from colors array of differentiable colors list in refernces.txt
                 fill(color(diffColor(count)));
                 triangle(0.0f,0.0f,300.0f * ((float)Math.cos(currentStep*radStep)),300.0f * ((float)Math.sin(currentStep*radStep)),300.0f * ((float)Math.cos((currentStep+1)*radStep)),300.0f * ((float)Math.sin((currentStep+1)*radStep)));
-                
+                if(steps == ((int) Math.floor(percent*2000))/2){
+                    float dist = far ? 400.0f : 320.0f;
+                    if(dist * ((float)Math.cos(currentStep*radStep)) < 0)
+                        textAlign(RIGHT);
+                    else   
+                        textAlign(LEFT);
+                    text(c.getName(), dist * ((float)Math.cos(currentStep*radStep)),dist * ((float)Math.sin(currentStep*radStep)));
+                    far = !far;
+                }
             }
             count++;
         }
@@ -93,7 +102,7 @@ class InteractivePieChart {
         //Surrounding Circle to correct Triangle draw errors
         noFill();
         stroke(0);
-        strokeWeight(25);
+        strokeWeight(20);
         circle(0,0,600);
         pop();
     }

@@ -1,6 +1,6 @@
 import java.util.*;
-ArrayList<Console> consoles;
-boolean atHome = true;
+ArrayList<Console> consoles, removedCons;
+boolean atHome = false;
 String filePath;
 int sceneSequencer;
 final int graphBound = 50;
@@ -8,12 +8,14 @@ final color[] colors = {#e6194b, #3cb44b, #ffe119, #4363d8, #f58231, #911eb4, #4
 InteractiveLineGraph ig;
 // InteractiveLineGraph ilg;
 InteractivePieChart ipc;
+boolean includeHH,includeCon;
 void settings(){
     size(1400,800);
 }
 void setup(){
     consoles = new ArrayList<Console>();
     filePath = atHome ? "C:/Users/ryan/programingFiles/ACSFinalProject/gameData" : "/Users/786784/Desktop/ACSFinalProject/gameData";
+    removedCons = new ArrayList<Console>();
     readFiles();
     // checkWork();
     fill(255);
@@ -24,9 +26,12 @@ void setup(){
     ig = new InteractiveLineGraph("year","average");
     // ilg = new InteractiveLineGraph("year","average");
     ipc = new InteractivePieChart();
+    includeHH = true;
+    includeCon = false;
 }
 void draw(){
     background(0);
+    includeSwitch();
     switch(sceneSequencer){
         case 0:
             displayValues();
@@ -178,6 +183,12 @@ public color diffColor(int x){
 
 //Mouse Click interactions
 void mousePressed(){
+    if(mouseX > width-100.0){
+        if(mouseY < 20)
+            switchCon();
+        else if(mouseY < 40)
+            switchHH();
+    } 
     if(sceneSequencer == 1){
         //Checks for Selection in X editor
         if(ig.getXEdit()){
@@ -233,5 +244,45 @@ void mousePressed(){
         else if(mouseX < ig.getBound() && mouseY > ig.getBound() && mouseY < height-ig.getBound())
             ipc.editOn();
     }
+}
 
+void includeSwitch(){
+    stroke(0);
+    strokeWeight(1);
+    textSize(20);
+    if(includeCon)
+        fill(100,255,100); 
+    else
+        fill(255,100,100);
+    rect(width,0,-100.0f,20.0f);
+    textAlign(RIGHT);
+    fill(0);
+    text("Consoles",width-5.0f,20.0f);
+    
+    if(includeHH)
+        fill(100,255,100);    
+    else
+        fill(255,100,100);
+    rect(width,20,-100.0f,20.0f);
+    fill(0);
+    text("HandHeld",width-5.0f,40.0f);
+    textAlign(LEFT);
+    textSize(28 * (((consoles.size()+1)*(1.0))/16));
+}
+
+void switchCon(){
+    if(includeHH == false && includeCon == true){
+        includeHH = true;
+        includeCon = false;
+    }
+    else    
+        includeCon = !includeCon;
+}
+void switchHH(){
+    if(includeCon == false && includeHH == true){
+        includeCon = true;
+        includeHH = false;
+    }
+    else    
+        includeHH = !includeHH;
 }

@@ -4,6 +4,8 @@ class InteractiveLineGraph extends InteractiveGraph{
     public InteractiveLineGraph(String x, String y, int b){super(x,y,b);} // x, y, and bound
     
     public void graphIt(){
+        stroke(0,255,0);
+        fill(0,255,0);
         text(getY() + " by " + getX(), getBound()/2,getBound()/2);
         //Create Graph Outline
         stroke(255,0,0);
@@ -108,8 +110,8 @@ class InteractiveLineGraph extends InteractiveGraph{
                 text("" + c.getName(),xPos + 20, yPos);
             }
             
-            drawWackCurve(pnts,color(255));
-            drawWackCurve(hPnts,color(255,0,255));
+            // drawWackCurve(pnts,color(255));
+            // drawWackCurve(hPnts,color(255,0,255));
             drawLinearRegression(pnts, color(255));
             // graphCC(pnts,color(255));
             drawLinearRegression(hPnts, color(255,0,255));
