@@ -95,7 +95,8 @@ class InteractiveLineGraph extends InteractiveGraph{
                 //draws dot
                 circle(xPos, yPos, 20);
                 //text
-                fill(255);
+                fill(0,255,255);
+                stroke(0,255,255);
                 if(xPos > width - (graphBound*3)){
                     xPos = xPos-40;
                     textAlign(RIGHT);

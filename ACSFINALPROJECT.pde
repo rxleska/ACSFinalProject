@@ -7,7 +7,7 @@ final int graphBound = 50;
 final color[] colors = {#e6194b, #3cb44b, #ffe119, #4363d8, #f58231, #911eb4, #46f0f0, #f032e6, #bcf60c, #fabebe, #008080, #e6beff, #9a6324, #fffac8, #800000, #aaffc3, #808000, #ffd8b1, #000075, #808080, #ffffff};
 
 //Filepath changes
-boolean atHome = true;
+boolean atHome = false;
 String filePath;
 
 //Scene Sequence and scene objects
@@ -109,8 +109,8 @@ void displayValues(){
     int i = 0; 
     fill(144,238,144);
     text("System:Year",40, (height/(consoles.size()+2))*(i+1));
-        text("  :#Games" ,275, (height/(consoles.size()+2))*(i+1));
-        text("Largest Game <+-+> Total storage size of all Games",450, (height/(consoles.size()+2))*(i+1));
+        text("  :#Games" ,300, (height/(consoles.size()+2))*(i+1));
+        text("Largest Game <+-+> Total storage size of all Games",475, (height/(consoles.size()+2))*(i+1));
         i++;
     for(Console c: consoles){
         if(c.isHandHeld())
@@ -118,8 +118,8 @@ void displayValues(){
         else
             fill(255);
         text(c.getTitle(),40, (height/(consoles.size()+2))*(i+1));
-        text("  :  " + c.numGames(),275, (height/(consoles.size()+2))*(i+1));
-        text(c.getLargest().getSizeStr() + " <+-+> " + c.getTotalReadable(),450, (height/(consoles.size()+2))*(i+1));
+        text("  :  " + c.numGames(),300, (height/(consoles.size()+2))*(i+1));
+        text(c.getLargest().getSizeStr() + " <+-+> " + c.getTotalReadable(),475, (height/(consoles.size()+2))*(i+1));
         i++;
     }
 }

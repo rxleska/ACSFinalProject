@@ -94,6 +94,7 @@ class InteractivePieChart {
         translate(width/2, height/2);
         int count = 0;
         boolean far = false;
+        float smallAlt = 0.0f;
         for(Console c: consoles){
             //finds percentage then finds number of lines to draw and draws them
             float percent = (float) ((c.getData(comparedValue))/total);
@@ -109,6 +110,13 @@ class InteractivePieChart {
                     float addY = percent < 0.01 ? 
                       percent < 0.003 ? -50 : -20
                      :0;
+                    if(percent < 0.045){
+                        if(percent < 0.003){
+                           addY = 25 + smallAlt; 
+                        }
+                        else
+                            addY = 15 + smallAlt;
+                    }
                     if(percent > 0.16)
                         dist = 330.0f;
                     if(dist * ((float)Math.cos(currentStep*radStep)) < 0)
@@ -120,6 +128,10 @@ class InteractivePieChart {
                     yCord = Math.abs(yCord) > (height/2)-50 ? yCord * 0.95 : yCord; 
                     text(c.getName() +":"+(Math.floor(percent*10000)/100) + "%", xCord,yCord);
                     far = !far;
+                    smallAlt+=addY;
+                }
+                if((currentStep*radStep)%(PI/2)==0){
+                    smallAlt = 0.0f;
                 }
             }
             count++;
