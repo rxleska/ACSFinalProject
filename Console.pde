@@ -134,6 +134,7 @@ class Console implements Comparable{
             Scanner read = new Scanner(f,"UTF-8");
             String curLine = "";
             while(read.hasNextLine()){
+                lineODat++;
                 curLine = read.nextLine();
                 //Remove all text wrapped in () {} [] or <>
                 curLine = curLine.replaceAll("\\([^)]*\\)|\\{[^}]*\\}|\\[.*?\\]|\\<[^>]*\\>", "");
@@ -267,8 +268,6 @@ class Console implements Comparable{
     public String getTotalReadable(){
         return doubleToReadableSize(getTotalSize());
     }
-
-
     public int compareTo(Object o){
         return this.getYear() - ((Console) o).getYear();
     }

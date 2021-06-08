@@ -63,7 +63,6 @@ class Game implements Comparable{
         else if(s.contains("b" )){totalSize = Double.parseDouble(s.substring(0,(s.indexOf("b" )))) /(1000.0*8);}
         return totalSize;
     }
-
     //returns name:fileSize
     public String toString(){
         return name + " -:-  " + fileSizeStr;

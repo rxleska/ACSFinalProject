@@ -1,67 +1,93 @@
 import java.util.*;
+//Console Collections
 ArrayList<Console> consoles, removedCons;
-boolean atHome = false;
-String filePath;
-int sceneSequencer;
+
+//constants
 final int graphBound = 50;
 final color[] colors = {#e6194b, #3cb44b, #ffe119, #4363d8, #f58231, #911eb4, #46f0f0, #f032e6, #bcf60c, #fabebe, #008080, #e6beff, #9a6324, #fffac8, #800000, #aaffc3, #808000, #ffd8b1, #000075, #808080, #ffffff};
+
+//Filepath changes
+boolean atHome = true;
+String filePath;
+
+//Scene Sequence and scene objects
+int sceneSequencer;
 InteractiveLineGraph ig;
-// InteractiveLineGraph ilg;
 InteractivePieChart ipc;
+StatTrack st;
+
+//toggles for console types
 boolean includeHH,includeCon;
+int lineODat;
+
+//why does this need to be in settings, why?
 void settings(){
     size(1400,800);
 }
+
 void setup(){
+    lineODat = 0;
+    filePath = atHome ? "C:/Users/ryan/programingFiles/ACSFinalProject" : "/Users/786784/Desktop/ACSFinalProject";
     consoles = new ArrayList<Console>();
-    filePath = atHome ? "C:/Users/ryan/programingFiles/ACSFinalProject/gameData" : "/Users/786784/Desktop/ACSFinalProject/gameData";
     removedCons = new ArrayList<Console>();
+    //read data and sort
     readFiles();
-    // checkWork();
-    fill(255);
-    textSize(28 * (((consoles.size()+1)*(1.0))/16));
-    noStroke();
-    sceneSequencer = 0;
     Collections.sort(consoles);
+    //Scene Setup
+    sceneSequencer = 0;
     ig = new InteractiveLineGraph("year","average");
-    // ilg = new InteractiveLineGraph("year","average");
     ipc = new InteractivePieChart();
+    st = new StatTrack(lineODat);
+    //toggles
     includeHH = true;
-    includeCon = false;
+    includeCon = true;
+    fill(255);
+    setBasicTextSize();
+    noStroke();
 }
+
 void draw(){
     background(0);
-    includeSwitch();
+    setBasicTextSize();
     switch(sceneSequencer){
         case 0:
+            includeSwitch();
             displayValues();
         break;
         case 1:
+            includeSwitch();
+            textSize(28);
             ig.drawGraph();
         break;
         case 2:
+            includeSwitch();
+            textSize(28);
             ipc.drawChart();
             // pieChartTotals();
         break;
         case 3:
+            st.displayData();
+        break;
+        case 4:
             sceneSequencer = 0;
         break;
     }
     
 }
 
-void keyPressed() {
+void keyPressed() { // moves between scenes
     if(key == ' '){
         sceneSequencer++;
     }
 }
 
 void readFiles(){
-    File folder = new File(filePath);
+    File folder = new File(filePath+"/gameData");
     // System.out.println(folder.getAbsolutePath());
     File[] listOfFiles = folder.listFiles();
     for(File file : listOfFiles){
         if(file.isFile()){
+            //checks if a handheld
             if(file.getName().charAt(0) == 72 || file.getName().charAt(0) == 104){
                 consoles.add(
                     new Console(
@@ -74,7 +100,6 @@ void readFiles(){
                         file.getName().substring(4,file.getName().length()-4), 
                         file.getName().substring(0,4)));
             }
-            
             consoles.get(consoles.size()-1).generateSet(file);
         }
     }
@@ -99,90 +124,14 @@ void displayValues(){
     }
 }
 
-//Creates a pie chart comparing sizes of game libraries for each console
-void pieChartTotals(){
-    strokeWeight(2);
-    
-    //defines a total to create percentages
-    float total = 0;
-    for(Console c: consoles){
-        total += c.getTotalSize();
-    }
-
-    //2000 positions for creation of circle
-    float radStep = PI/1000.0F;
-    int currentStep = 0;
-    
-    //translates to center screen and starts drawing 
-    push();
-    translate(width/2, height/2);
-    int count = 0;
-    for(Console c: consoles){
-        
-        //finds percentage then finds number of lines to draw and draws them
-        float percent = (float) c.getTotalSize()/total;
-        for(int steps = (int) Math.floor(percent*2000);steps > 0; steps--){
-            currentStep++;
-            stroke(color(diffColor(count))); //colors from colors array of differentiable colors list in refernces.txt
-            triangle(0.0f,0.0f,300.0f * ((float)Math.cos(currentStep*radStep)),300.0f * ((float)Math.sin(currentStep*radStep)),300.0f * ((float)Math.cos((currentStep+1)*radStep)),300.0f * ((float)Math.sin((currentStep+1)*radStep)));
-        }
-        count++;
-    }
-
-    //Surrounding Circle to correct Triangle draw errors
-    noFill();
-    stroke(0);
-    strokeWeight(25);
-    circle(0,0,600);
-    pop();
-}
-
-void pieChartAverage(){
-    strokeWeight(2);
-    //defines a total to create percentages
-    float total = 0;
-    for(Console c: consoles){
-        total += c.getAverageSize();
-    }
-
-    //2000 positions for creation of circle
-    float radStep = PI/1000.0F;
-    int currentStep = 0;
-
-    //translates to center screen and starts drawing 
-    push();
-    translate(width/2, height/2);
-    int count = 0;
-    for(Console c: consoles){
-
-        //finds percentage then finds number of lines to draw and draws them
-        float percent = (float) c.getAverageSize()/total;
-        for(int steps = (int) Math.floor(percent*2000);steps > 0; steps--){
-            currentStep++;
-            stroke(color(diffColor(count))); //colors from colors array of differentiable colors list in refernces.txt
-            triangle(0.0f,0.0f,300.0f * ((float)Math.cos(currentStep*radStep)),300.0f * ((float)Math.sin(currentStep*radStep)),300.0f * ((float)Math.cos((currentStep+1)*radStep)),300.0f * ((float)Math.sin((currentStep+1)*radStep)));
-        }
-        count++;
-    }
-
-    //Surrounding Circle to correct Triangle draw errors
-    noFill();
-    stroke(0);
-    strokeWeight(25);
-    circle(0,0,600);
-    pop();
-}
-
-void dbug(){
-    System.out.println("HEREHEREHEREHEREHEREHEREHEREHEREHERE");
-}
-
+//different colors from the differentiable colors array
 public color diffColor(int x){
     return colors[x%colors.length];
 }
 
 //Mouse Click interactions
 void mousePressed(){
+    //toggle buttons
     if(mouseX > width-100.0){
         if(mouseY < 20)
             switchCon();
@@ -227,6 +176,7 @@ void mousePressed(){
             //dont
         }
     }
+    //pie chart buttons
     else if(sceneSequencer == 2){
         if(ipc.getEdit()){
             if(mouseY > height- ipc.getBound() && mouseX > width- (ipc.getBound()*4)){
@@ -246,10 +196,13 @@ void mousePressed(){
     }
 }
 
+//Method that allows the user to toggle seeing standalone consoles vs handheld consolesd 
 void includeSwitch(){
+    //button setup
     stroke(0);
     strokeWeight(1);
     textSize(20);
+    //con button
     if(includeCon)
         fill(100,255,100); 
     else
@@ -257,19 +210,22 @@ void includeSwitch(){
     rect(width,0,-100.0f,20.0f);
     textAlign(RIGHT);
     fill(0);
-    text("Consoles",width-5.0f,20.0f);
-    
+    text("Consoles",width-5.0f,18.0f);
+    //hand held button
     if(includeHH)
         fill(100,255,100);    
     else
         fill(255,100,100);
     rect(width,20,-100.0f,20.0f);
     fill(0);
-    text("HandHeld",width-5.0f,40.0f);
+    text("HandHeld",width-5.0f,38.0f);
+    
+    //reset stuff
     textAlign(LEFT);
-    textSize(28 * (((consoles.size()+1)*(1.0))/16));
+    setBasicTextSize();
 }
 
+//toggles standalone consoles 
 void switchCon(){
     if(includeHH == false && includeCon == true){
         includeHH = true;
@@ -277,7 +233,10 @@ void switchCon(){
     }
     else    
         includeCon = !includeCon;
+    changeData();
 }
+
+//toggles Hand held consoles
 void switchHH(){
     if(includeCon == false && includeHH == true){
         includeCon = true;
@@ -285,4 +244,45 @@ void switchHH(){
     }
     else    
         includeHH = !includeHH;
+    changeData();
+}
+
+//changes data in consoles arraylist 
+void changeData(){
+    for(int i = consoles.size()-1; i >= 0; i--){
+        Console c = consoles.get(i);
+        if(c.isHandHeld()){
+            if(!includeHH){
+                removedCons.add(c);
+                consoles.remove(i);
+            }
+        }
+        else{
+            if(!includeCon){
+                removedCons.add(c);
+                consoles.remove(i);
+            }
+        }
+    }
+    for(int i = removedCons.size()-1; i >= 0; i--){
+        Console c = removedCons.get(i);
+        if(c.isHandHeld()){
+            if(includeHH){
+                consoles.add(c);
+                removedCons.remove(i);
+            }
+        }
+        else{
+            if(includeCon){
+                consoles.add(c);
+                removedCons.remove(i);
+            }
+        }
+    }
+    Collections.sort(consoles);
+}
+
+//uniform text size setter
+void setBasicTextSize(){
+    textSize(28 * (16.0/((consoles.size()+1)*(1.0)) < 1.25 ? 16/((consoles.size()+1)*(1.0)) : 1.25));
 }
